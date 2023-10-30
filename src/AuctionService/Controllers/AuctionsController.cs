@@ -5,6 +5,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Contracts;
 using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -43,13 +44,6 @@ public class AuctionsController : ControllerBase
         }
 
         return await query.ProjectTo<AuctionDto>(_mapper.ConfigurationProvider).ToListAsync();
-
-        // var auctions = await _context.Auctions
-        //     .Include(a => a.Item)
-        //     .OrderBy(x => x.Item.Make)
-        //     .ToListAsync();
-
-        // return _mapper.Map<List<AuctionDto>>(auctions);
     }
 
     [HttpGet("{id}")]
@@ -67,12 +61,15 @@ public class AuctionsController : ControllerBase
         return _mapper.Map<AuctionDto>(auction);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<AuctionDto>> CreateAuction(CreateAuctionDto auctionDto)
     {
         var auction = _mapper.Map<Auction>(auctionDto);
-        // TODO: add current user as seller
-        auction.Seller = "Test";
+        
+        //can access to user.identity.name because we defined 
+        //opt.TokenValidationParameters.NameClaimType = "username"; in program.cs
+        auction.Seller = User.Identity.Name;
 
         _context.Auctions.Add(auction);
 
@@ -88,6 +85,7 @@ public class AuctionsController : ControllerBase
         return CreatedAtAction(nameof(GetAuctionById), new { auction.Id }, newAuction);
     }
 
+    [Authorize]
     //route parameter
     [HttpPut("{id}")]
     public async Task<ActionResult> UpdateAuction(Guid id, UpdateAuctionDto updateAuctionDto)
@@ -99,7 +97,10 @@ public class AuctionsController : ControllerBase
         if (auction is null)
             return NotFound();
 
-        //TODO: check seller == username, only the one who post this can update
+        //only poster can edit auction
+        if (auction.Seller != User.Identity.Name) return Forbid();
+
+
         //The null-coalescing operator ?? returns the value of its left-hand operand if it isn't null ;
         //otherwise, it evaluates the right-hand operand
         auction.Item.Make = updateAuctionDto.Make ?? auction.Item.Make;
@@ -119,6 +120,7 @@ public class AuctionsController : ControllerBase
         return BadRequest("Problem save changes");
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteAuction(Guid id)
     {
@@ -127,7 +129,8 @@ public class AuctionsController : ControllerBase
         if (auction is null)
             return NotFound();
 
-        //TODO: check seller == username
+        //only poster can delete auction
+        if (auction.Seller != User.Identity.Name) return Forbid();
 
         await _publishEndpoint.Publish<AuctionDeleted>(new { Id = auction.Id.ToString() });
 
