@@ -29,6 +29,7 @@ builder.Services.AddMassTransit(x =>
     });
 
     //faulty handling (example)
+    //only need one because it's gonna auto find any class that derived from IConsumer
     x.AddConsumersFromNamespaceContaining<AuctionCreatedFaultConsumer>();
 
     x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("auction", false));
@@ -41,8 +42,11 @@ builder.Services.AddMassTransit(x =>
     );
 });
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(opt => {
+//register authentication with jwt
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(opt =>
+    {
         opt.Authority = builder.Configuration["IdentityServiceUrl"];
         opt.RequireHttpsMetadata = false; //identity server is running on http
         opt.TokenValidationParameters.ValidateAudience = false;
@@ -54,7 +58,6 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 //direct http request to the correct API endpoint
 app.MapControllers();
