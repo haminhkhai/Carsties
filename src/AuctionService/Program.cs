@@ -37,6 +37,15 @@ builder.Services.AddMassTransit(x =>
     x.UsingRabbitMq(
         (context, cfg) =>
         {
+            cfg.Host(
+                builder.Configuration["RabbitMq:Host"],
+                "/",
+                host =>
+                {
+                    host.Username(builder.Configuration.GetValue("RabbitMq:Username", "guest"));
+                    host.Password(builder.Configuration.GetValue("RabbitMq:Password", "guest"));
+                }
+            );
             cfg.ConfigureEndpoints(context);
         }
     );
@@ -47,6 +56,7 @@ builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opt =>
     {
+        System.Console.WriteLine("--Enter auction " + builder.Configuration["IdentityServiceUrl"]);
         opt.Authority = builder.Configuration["IdentityServiceUrl"];
         opt.RequireHttpsMetadata = false; //identity server is running on http
         opt.TokenValidationParameters.ValidateAudience = false;

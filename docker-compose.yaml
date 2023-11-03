@@ -21,3 +21,77 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+  auction-svc:
+    image: victordev12/auction-svc:latest
+    build:
+      #root directory is a period (.)
+      context: .
+      dockerfile: src/AuctionService/Dockerfile
+    #these environment variables will overwrite appsetting.json
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - RabbitMq__Host=rabbitmq
+      - ConnectionStrings__DefaultConnection=Server=postgres:5432;User Id=postgres;Password=postgrespw;Database=auctions
+      - IdentityServiceUrl=http://identity-svc
+    ports:
+      #access to docker container through port 7001 but
+      #inside docker it'll run at port 80
+      - 7001:80
+    depends_on:
+      # auction service depend on below service
+      - postgres
+      - rabbitmq
+  search-svc:
+    image: victordev12/search-svc:latest
+    build:
+      #root directory is a period (.)
+      context: .
+      dockerfile: src/SearchService/Dockerfile
+    #these environment variables will overwrite appsetting.json
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - RabbitMq__Host=rabbitmq
+      - ConnectionStrings__MongoDbConnection=mongodb://root:mongopw@mongodb
+      - AuctionServiceUrl=http://auction-svc
+    ports:
+      #access to docker container through port 7001 but
+      #inside docker it'll run at port 80
+      - 7002:80
+    depends_on:
+      # auction service depend on below service
+      - mongodb
+      - rabbitmq
+  identity-svc:
+    image: victordev12/identity-svc:latest
+    build:
+      #root directory is a period (.)
+      context: .
+      dockerfile: src/IdentityService/Dockerfile
+    #these environment variables will overwrite appsetting.json
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=postgres:5432;User Id=postgres;Password=postgrespw;Database=identity
+    ports:
+      #access to docker container through port 7001 but
+      #inside docker it'll run at port 80
+      - 5000:80
+    depends_on:
+      # auction service depend on below service
+      - postgres
+  gateway-svc:
+    image: victordev12/gateway-svc:latest
+    build:
+      #root directory is a period (.)
+      context: .
+      dockerfile: src/GatewayService/Dockerfile
+    #these environment variables will overwrite appsetting.json
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      #access to docker container through port 7001 but
+      #inside docker it'll run at port 80
+      - 6001:80

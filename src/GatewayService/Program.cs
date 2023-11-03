@@ -8,6 +8,7 @@ builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opt =>
     {
+        System.Console.WriteLine(builder.Configuration["IdentityServiceUrl"]);
         opt.Authority = builder.Configuration["IdentityServiceUrl"];
         opt.RequireHttpsMetadata = false; //identity server is running on http
         opt.TokenValidationParameters.ValidateAudience = false;
