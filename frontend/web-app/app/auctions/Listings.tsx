@@ -22,7 +22,9 @@ export default function Listings() {
         searchTerm: state.searchTerm,
         orderBy: state.orderBy,
         filterBy: state.filterBy,
-    }));
+        seller: state.seller,
+        winner: state.winner,
+    }), shallow);
     const setParams = useParamsStore((state) => state.setParams);
     const url = queryString.stringifyUrl({ url: '', query: params });
 
