@@ -20,9 +20,10 @@ COPY src/NotificationService/NotificationService.csproj src/NotificationService/
 RUN dotnet restore Carsties.sln
 
 # COPY the app folder over
-COPY src/IdentityService src/IdentityService
+COPY src/NotificationService src/NotificationService
+COPY src/Contracts src/Contracts
 #workdir is just like terminal current dir
-WORKDIR /app/src/IdentityService
+WORKDIR /app/src/NotificationService
 RUN dotnet publish -c Release -o /app/src/out
 
 #after publish switch to runtime image to lighten data
@@ -30,4 +31,4 @@ RUN dotnet publish -c Release -o /app/src/out
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /app
 COPY --from=build /app/src/out .
-ENTRYPOINT ["dotnet", "IdentityService.dll"]
+ENTRYPOINT ["dotnet", "NotificationService.dll"]

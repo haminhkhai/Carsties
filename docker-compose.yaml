@@ -123,3 +123,21 @@ services:
             # auction service depend on below service
             - mongodb
             - rabbitmq
+    notify-svc:
+        image: victordev12/notify-svc:latest
+        build:
+            #root directory is a period (.)
+            context: .
+            dockerfile: src/NotificationService/Dockerfile
+        #these environment variables will overwrite appsetting.json
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - ASPNETCORE_URLS=http://+:80
+            - RabbitMq__Host=rabbitmq
+        ports:
+            #access to docker container through port 7003 but
+            #inside docker it'll run at port 80
+            - 7004:80
+        depends_on:
+            # auction service depend on below service
+            - rabbitmq
