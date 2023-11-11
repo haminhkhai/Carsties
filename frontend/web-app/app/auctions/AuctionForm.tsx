@@ -5,10 +5,7 @@ import React, { useEffect } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import Input from '../components/Input';
 import DateInput from '../components/DateInput';
-import {
-    createAuction,
-    updateAuction,
-} from '../actions/auctionActions';
+import { createAuction, updateAuction } from '../actions/auctionActions';
 import { usePathname, useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { Auction } from '../types';
@@ -31,14 +28,13 @@ export default function AuctionForm({ auction }: Props) {
     });
 
     useEffect(() => {
-        console.log(pathName);
         if (auction) {
             const { make, model, color, mileage, year } = auction;
             //pass these obj to reset function to re-initialize the form
             reset({ make, model, color, mileage, year });
         }
         setFocus('make');
-    }, [setFocus]);
+    }, [setFocus, reset, auction]);
 
     const onSubmit = async (data: FieldValues) => {
         try {
@@ -66,9 +62,7 @@ export default function AuctionForm({ auction }: Props) {
     };
 
     return (
-        <form
-            className='flex flex-col mt-3'
-            onSubmit={handleSubmit(onSubmit)}>
+        <form className='flex flex-col mt-3' onSubmit={handleSubmit(onSubmit)}>
             <Input
                 label='Make'
                 name='make'
@@ -131,8 +125,7 @@ export default function AuctionForm({ auction }: Props) {
                             dateFormat='dd MMMM yyyy h:mm a'
                             showTimeSelect
                             rules={{
-                                required:
-                                    'Auction end date is required',
+                                required: 'Auction end date is required',
                             }}
                         />
                     </div>

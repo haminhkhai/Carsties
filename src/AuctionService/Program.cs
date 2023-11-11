@@ -63,6 +63,7 @@ builder.Services
         opt.TokenValidationParameters.NameClaimType = "username";
     });
 
+builder.Services.AddScoped<IAuctionRepository, AuctionRepository>();
 builder.Services.AddGrpc();
 
 var app = builder.Build();
@@ -83,3 +84,6 @@ catch (System.Exception e)
     System.Console.WriteLine(e);
 }
 app.Run();
+
+//for integration testing
+public partial class Program { };

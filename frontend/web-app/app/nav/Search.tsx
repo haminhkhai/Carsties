@@ -9,9 +9,8 @@ export default function Search() {
     const router = useRouter();
     const pathName = usePathname();
     const setParams = useParamsStore((state) => state.setParams);
-    const setSearchValue = useParamsStore(
-        (state) => state.setSearchValue
-    );
+    const resetParams = useParamsStore((state) => state.reset);
+    const setSearchValue = useParamsStore((state) => state.setSearchValue);
     const searchValue = useParamsStore((state) => state.searchValue);
 
     const onChange = (event: any) => {
@@ -20,6 +19,7 @@ export default function Search() {
 
     const search = () => {
         if (pathName !== '/') router.push('/');
+        resetParams();
         setParams({ searchTerm: searchValue });
     };
 

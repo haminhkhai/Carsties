@@ -8,11 +8,7 @@ import { signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
-import {
-    AiFillCar,
-    AiFillTrophy,
-    AiOutlineLogout,
-} from 'react-icons/ai';
+import { AiFillCar, AiFillTrophy, AiOutlineLogout } from 'react-icons/ai';
 import { HiCog, HiUser } from 'react-icons/hi';
 
 type Props = {
@@ -22,15 +18,17 @@ type Props = {
 export default function UserActions({ user }: Props) {
     const router = useRouter();
     const pathName = usePathname();
+    const resetParams = useParamsStore((state) => state.reset);
     const setParams = useParamsStore((state) => state.setParams);
 
     const setWinner = () => {
-        setParams({ winner: user.username, seller: undefined });
+        setParams({ winner: user.username, seller: undefined, filterBy: 'finished' });
         //if path is not at home page then route back to home page
         if (pathName !== '/') router.push('/');
     };
 
     const setSeller = () => {
+        resetParams();
         setParams({ winner: undefined, seller: user.username });
         //if path is not at home page then route back to home page
         if (pathName !== '/') router.push('/');

@@ -53,7 +53,7 @@ export default function Listings() {
             setData(data);
             setLoading(false);
         });
-    }, [url]);
+    }, [url, setData]);
 
     if (loading) return <h3>Loading...</h3>;
 
@@ -66,10 +66,7 @@ export default function Listings() {
                 <>
                     <div className='grid grid-cols-4 gap-6'>
                         {data.auctions.map((auction) => (
-                            <AuctionCard
-                                key={auction.id}
-                                auction={auction}
-                            />
+                            <AuctionCard key={auction.id} auction={auction} />
                         ))}
                     </div>
                     <div className='flex justify-center mt-4'>
