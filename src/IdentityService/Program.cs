@@ -49,7 +49,7 @@ catch (Exception ex)
 }
 finally
 {
-    Log.Information("-->Shutting down");
+    Log.Information("-->Shutting down twice");
     Log.Information("Shut down complete");
     Log.CloseAndFlush();
 }
