@@ -30,8 +30,8 @@ try
     // this seeding is only for the template to bootstrap the DB and users.
     // in production you will likely want a different approach.
     retryPolicy.ExecuteAndCapture(() => SeedData.EnsureSeedData(app));
-    
-    
+
+
 
     app.Run();
 }
@@ -49,6 +49,7 @@ catch (Exception ex)
 }
 finally
 {
+    Log.Information("-->Shutting down");
     Log.Information("Shut down complete");
     Log.CloseAndFlush();
 }
