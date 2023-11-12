@@ -1,4 +1,6 @@
 ﻿using IdentityService;
+using Npgsql;
+using Polly;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateBootstrapLogger();
@@ -21,9 +23,15 @@ try
 
     var app = builder.ConfigureServices().ConfigurePipeline();
 
+    //setup a policy to retry connect when postgres infrastructure hasn't been stated yet
+    var retryPolicy = Policy
+        .Handle<NpgsqlException>()
+        .WaitAndRetry(5, retryAttemp => TimeSpan.FromSeconds(10));
     // this seeding is only for the template to bootstrap the DB and users.
     // in production you will likely want a different approach.
-    SeedData.EnsureSeedData(app);
+    retryPolicy.ExecuteAndCapture(() => SeedData.EnsureSeedData(app));
+    
+    
 
     app.Run();
 }
