@@ -15,6 +15,9 @@ builder.Services
         opt.TokenValidationParameters.NameClaimType = "username";
     });
 
+System.Console.WriteLine("--> configuration");
+System.Console.WriteLine(builder.Configuration["IdentityServiceUrl"]);
+
 builder.Services.AddCors(opt =>
 {
     opt.AddPolicy("customPolicy", b =>
