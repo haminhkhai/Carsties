@@ -26,9 +26,10 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           #put workflow at the root of GITHUB repository
-          context: '{{defaultContext}}'
+          context: "{{defaultContext}}"
           file: ${{ env.DOCKERFILE }}
-          push: truedocker-desktop
+          push: true
+          tags: ${{ env.REGISTRY_IMAGE }}:latest
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
