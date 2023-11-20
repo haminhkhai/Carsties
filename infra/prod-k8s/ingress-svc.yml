@@ -6,14 +6,9 @@ metadata:
     name: ingress-svc
 spec:
   ingressClassName: nginx
-  tls:
-    - hosts:
-      - app.carsties.com
-      - api.carsties.com
-      secretName: carsties-app-tls
   rules:
   #receive request to app.carsties.com and forward it to webapp
-  - host: app.carsties.com
+  - host: app.microservices.io.vn
     http:
       paths:
       - pathType: Prefix
@@ -23,7 +18,7 @@ spec:
             name: webapp-clusterip
             port: 
               number: 3000
-  - host: api.carsties.com
+  - host: api.microservices.io.vn
     http:
       paths:
       - pathType: Prefix
