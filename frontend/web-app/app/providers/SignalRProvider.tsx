@@ -25,7 +25,7 @@ export default function SignalRProvider({ children, user }: Props) {
 
     const apiUrl =
         process.env.NODE_ENV === 'production'
-            ? 'https://api.carsties.com/notifications'
+            ? 'https://api.microservices.io.vn/notifications'
             : process.env.NEXT_PUBLIC_NOTIFY_URL;
 
     useEffect(() => {

@@ -21,8 +21,13 @@ spec:
               secretKeyRef:
                 name: webapp-secret
                 key: authSecret
+          - name: CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: webapp-secret
+                key: clientSecret
           - name: NEXTAUTH_URL
-            value: https://app.carsties.com
+            value: https://app.microservices.io.vn
           - name: API_URL
             #need that foward dash
             value: http://gateway-clusterip/
